@@ -1,0 +1,13 @@
+{
+    "compilerOptions": {
+        "declaration": true,
+        "declarationDir": "./dist",
+        "moduleResolution": "node",
+        "outDir": "./dist",
+        "target": "es2015",
+        "module": "commonjs",
+        "esModuleInterop": true
+    },
+    "include": ["src/index.ts"],
+    "exclude": ["node_modules"]
+}
