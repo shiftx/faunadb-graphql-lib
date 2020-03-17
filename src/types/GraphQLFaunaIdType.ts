@@ -7,9 +7,7 @@ export class GraphQLFaunaIdType extends GraphQLScalarType {
         super(args)
         this.collection = collection
         this.parseValue = val => {
-            throw new Error("not implemented")
-            console.log("here 2", val, collection)
-            q.Ref(q.Collection(collection), val)
+            return q.Ref(q.Collection(collection), val)
         }
         this.serialize = val => {
             // throw locatedError(new Error(issue))
