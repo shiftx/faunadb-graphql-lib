@@ -3221,6 +3221,15 @@ __metadata:
   languageName: node
   linkType: hard
 
+"faunadb-fql-lib@npm:^0.10.0":
+  version: 0.10.0
+  resolution: "faunadb-fql-lib@npm:0.10.0"
+  peerDependencies:
+    faunadb: 2.x
+  checksum: 2/f41553fafcbef9b505403bb2f0a24595ee6bce44f3eab2981b4a267be0c505a20a3b8ae1fa2b4a250450bfa9b2a8e7cfeaacd38e6e24719d54240bd755785369
+  languageName: node
+  linkType: hard
+
 "faunadb-graphql-lib@workspace:.":
   version: 0.0.0-use.local
   resolution: "faunadb-graphql-lib@workspace:."
@@ -3233,6 +3242,7 @@ __metadata:
     "@yarnpkg/pnpify": ^2.0.0-rc.18
     eslint: ^6.8.0
     faunadb: ^2.11.1
+    faunadb-fql-lib: ^0.10.0
     graphql: ^14.6.0
     jest: ^25.1.0
     prettier: ^1.19.1

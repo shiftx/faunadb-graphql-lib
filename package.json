@@ -16,6 +16,7 @@
   "scripts": {
     "build": "rm -rf dist && rollup -c && tsc",
     "test": "jest",
+    "dev": "yarn test --watch",
     "release": "yarn build && release-it"
   },
   "devDependencies": {
@@ -27,6 +28,7 @@
     "@yarnpkg/pnpify": "^2.0.0-rc.18",
     "eslint": "^6.8.0",
     "faunadb": "^2.11.1",
+    "faunadb-fql-lib": "^0.10.0",
     "graphql": "^14.6.0",
     "jest": "^25.1.0",
     "prettier": "^1.19.1",
