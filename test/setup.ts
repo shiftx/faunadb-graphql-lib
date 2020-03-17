@@ -42,55 +42,55 @@ const migration2 = [
     ),
 ]
 
-client.query(migration1)
-
-client.query(migration2).catch(err => {
-    console.log(err)
-})
-
-client.query(
-    q.Do(
-        q.If(
-            q.Exists(q.Ref(q.Collection("Users"), "1")),
-            null,
-            q.Create(q.Ref(q.Collection("Users"), "1"), {
-                data: {
-                    name: "Foo Bar",
-                    email: "foo@bar.com",
-                },
-            })
-        ),
-        q.If(
-            q.Exists(q.Ref(q.Collection("Posts"), "1")),
-            null,
-            q.Create(q.Ref(q.Collection("Posts"), "1"), {
-                data: {
-                    title: "Test post 1",
-                    authorRef: q.Ref(q.Collection("Users"), "1"),
-                },
-            })
-        ),
-        q.If(
-            q.Exists(q.Ref(q.Collection("Attachments"), "1")),
-            null,
-            q.Create(q.Ref(q.Collection("Attachments"), "1"), {
-                data: {
-                    kind: "file",
-                    file: "foo.pdf",
-                    postRef: q.Ref(q.Collection("Posts"), "1"),
-                },
-            })
-        ),
-        q.If(
-            q.Exists(q.Ref(q.Collection("Attachments"), "2")),
-            null,
-            q.Create(q.Ref(q.Collection("Attachments"), "2"), {
-                data: {
-                    kind: "note",
-                    text: "Lorem Ipsum...",
-                    postRef: q.Ref(q.Collection("Posts"), "1"),
-                },
-            })
-        )
+const seed = q.Do(
+    q.If(
+        q.Exists(q.Ref(q.Collection("Users"), "1")),
+        null,
+        q.Create(q.Ref(q.Collection("Users"), "1"), {
+            data: {
+                name: "Foo Bar",
+                email: "foo@bar.com",
+            },
+        })
+    ),
+    q.If(
+        q.Exists(q.Ref(q.Collection("Posts"), "1")),
+        null,
+        q.Create(q.Ref(q.Collection("Posts"), "1"), {
+            data: {
+                title: "Test post 1",
+                authorRef: q.Ref(q.Collection("Users"), "1"),
+            },
+        })
+    ),
+    q.If(
+        q.Exists(q.Ref(q.Collection("Attachments"), "1")),
+        null,
+        q.Create(q.Ref(q.Collection("Attachments"), "1"), {
+            data: {
+                kind: "file",
+                file: "foo.pdf",
+                postRef: q.Ref(q.Collection("Posts"), "1"),
+            },
+        })
+    ),
+    q.If(
+        q.Exists(q.Ref(q.Collection("Attachments"), "2")),
+        null,
+        q.Create(q.Ref(q.Collection("Attachments"), "2"), {
+            data: {
+                kind: "note",
+                text: "Lorem Ipsum...",
+                postRef: q.Ref(q.Collection("Posts"), "1"),
+            },
+        })
     )
 )
+
+const setup = async () => {
+    await client.query(migration1)
+    await client.query(migration2)
+    await client.query(seed)
+}
+
+setup()
