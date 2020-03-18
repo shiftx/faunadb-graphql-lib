@@ -13,10 +13,12 @@ export const UserType = new GraphQLFaunaCollectionType({
         posts: {
             type: PostPageType,
             fql: q =>
-                q.Paginate(
-                    q.Match(
-                        q.Index("Posts_by_authorRef"),
-                        q.SelectRef(q.Var("_item_"))
+                q.GetAll(
+                    q.Paginate(
+                        q.Match(
+                            q.Index("Posts_by_authorRef"),
+                            q.SelectRef(q.Var("_item_"))
+                        )
                     )
                 ),
         },
