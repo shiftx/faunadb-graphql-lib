@@ -1,10 +1,10 @@
-import { GraphQLObjectType, GraphQLObjectTypeConfig } from "graphql"
+import { GraphQLObjectType } from "graphql"
 
 export class GraphQLFaunaCollectionType extends GraphQLObjectType {
     collectionName: string
-    fqlTypeCheck: any
-    constructor({ collectionName, fqlTypeCheck, ...args }) {
-        super(args)
+    fqlTypeCheck: () => void
+    constructor({ name, fields, collectionName, fqlTypeCheck }) {
+        super({ name, fields })
         this.collectionName = collectionName
         this.fqlTypeCheck = fqlTypeCheck
     }

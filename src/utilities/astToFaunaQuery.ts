@@ -3,8 +3,6 @@ import {
     visit,
     visitWithTypeInfo,
     isLeafType,
-    isCompositeType,
-    isAbstractType,
     GraphQLList,
 } from "graphql"
 
@@ -39,7 +37,7 @@ const defaultEmbedQuery = (fieldName, isList) =>
         q.If(q.IsNull(q.Var("ref")), null, q.Get(q.Var("ref")))
     )
 
-export const buildFaunaQuery = (ast, query) => {
+export const astToFaunaQuery = (ast, query) => {
     const { operation, schema, fieldName } = ast
     const typeInfo = new TypeInfo(schema)
 
@@ -48,6 +46,7 @@ export const buildFaunaQuery = (ast, query) => {
             leave: node => {
                 const type = typeInfo.getType()
                 return q.If(
+                    // @ts-ignore
                     type.fqlTypeCheck(q, q.Var("_item_")),
                     reduceToObject(node.selectionSet.selections),
                     {}
@@ -82,9 +81,14 @@ export const buildFaunaQuery = (ast, query) => {
                     }
                 } else {
                     const field = typeInfo.getFieldDef()
-                    const relQuery = field.fql
-                        ? field.fql(q)
-                        : defaultEmbedQuery(name, isList)
+                    let relQuery
+                    // @ts-ignore 2
+                    if (field.fql) {
+                        // @ts-ignore 2
+                        relQuery = field.fql(q)
+                    } else {
+                        relQuery = defaultEmbedQuery(name, isList)
+                    }
 
                     return {
                         [name]: nestedQuery(
