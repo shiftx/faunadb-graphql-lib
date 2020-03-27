@@ -1,7 +1,8 @@
-import { GraphQLObjectType, GraphQLList, GraphQLInt } from "graphql"
+import { GraphQLList } from "graphql"
 import { GraphQLFaunaCursorType } from "./GraphQLFaunaCursorType"
+import { GraphQLFaunaObjectType } from "./GraphQLFaunaObjectType"
 
-export class GraphQLFaunaPageType extends GraphQLObjectType {
+export class GraphQLFaunaPageType extends GraphQLFaunaObjectType {
     constructor({ name, itemType, fields = {}, ...rest }) {
         super({
             name,
@@ -9,18 +10,16 @@ export class GraphQLFaunaPageType extends GraphQLObjectType {
             fields: () => ({
                 next: {
                     type: GraphQLFaunaCursorType,
-                    fql: q => q.Select(["after"], q.Var("_item_"), null),
+                    fqlQuery: (doc, q) => q.Select(["after"], doc, null),
                 },
                 previous: {
                     type: GraphQLFaunaCursorType,
-                    fql: q => q.Select(["before"], q.Var("_item_"), null),
+                    fqlQuery: (doc, q) => q.Select(["before"], doc, null),
                 },
-                items: {
+                page: {
                     type: new GraphQLList(itemType()),
-                    args: {
-                        size: { type: GraphQLInt, defaultValue: 64 },
-                    },
-                    fql: q => q.Select(["data"], q.Var("_item_")),
+                    fqlQuery: (doc, q) => q.Select(["data"], doc),
+                    // resolve: source => console.log(source.page),
                 },
                 ...fields,
             }),

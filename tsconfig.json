@@ -1,13 +1,13 @@
 {
     "compilerOptions": {
         "declaration": true,
-        "declarationDir": "./dist",
+        "declarationDir": "./dist/types",
         "moduleResolution": "node",
         "outDir": "./dist",
         "target": "es2015",
         "module": "commonjs",
         "esModuleInterop": true
     },
-    "include": ["src/index.ts"],
-    "exclude": ["node_modules"]
+    "include": ["src"],
+    "exclude": ["node_modules", "__test__"]
 }

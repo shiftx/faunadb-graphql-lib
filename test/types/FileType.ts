@@ -8,8 +8,7 @@ export const FileType = new GraphQLFaunaCollectionType({
     name: "FileType",
     interfaces: [AttachmentType],
     collectionName: "Attachments",
-    fqlTypeCheck: (q, source) =>
-        q.Equals("file", q.Select(["data", "kind"], source)),
+    fqlTypeCheck: (doc, q) => q.Equals("file", q.Select(["data", "kind"], doc)),
     isTypeOf: source => source.kind === "file",
     fields: () => ({
         id: { type: AttachmentIdType },

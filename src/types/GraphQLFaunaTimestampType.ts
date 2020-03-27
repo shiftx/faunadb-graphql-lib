@@ -47,11 +47,9 @@ const toISO8601StringWithNanoseconds = int => {
 
 const fromISO8601StringWithNanoseconds = string => {
     const match = string.match(/\.(\d+)Z$/)
-    const subSeconds = match ? parseInt(match[1], 0) : 0
-    const digits = Math.floor(Math.log10(subSeconds) + 1)
-    let unix = Date.parse(string) * 1000
-    if (digits === 6) unix += subSeconds % 1000
-    return unix
+    const subSeconds = match ? match[1] : "000000"
+    const unixSeconds = Math.floor(Date.parse(string) / 1000)
+    return Number(`${unixSeconds}${subSeconds.padEnd(6, "0")}`)
 }
 
 export const GraphQLFaunaTimestampType = new GraphQLScalarType({

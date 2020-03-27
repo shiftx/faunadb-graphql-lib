@@ -8,8 +8,7 @@ export const NoteType = new GraphQLFaunaCollectionType({
     name: "NoteType",
     interfaces: [AttachmentType],
     collectionName: "Attachments",
-    fqlTypeCheck: (q, source) =>
-        q.Equals("note", q.Select(["data", "kind"], source)),
+    fqlTypeCheck: (doc, q) => q.Equals("note", q.Select(["data", "kind"], doc)),
     isTypeOf: source => source.kind === "note",
     fields: () => ({
         id: { type: AttachmentIdType },

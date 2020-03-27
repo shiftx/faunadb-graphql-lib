@@ -1,4 +1,5 @@
 import { Client } from "faunadb"
+import { parseJSON } from "faunadb/src/_json"
 
 const opts =
     process.env.CI === "true"
@@ -11,5 +12,21 @@ const opts =
               port: 8443,
               domain: "localhost",
           }
-
-export const createClient = () => new Client(opts)
+// @ts-ignore
+export const createClient = () =>
+    new Client({
+        ...opts,
+        observer: res => {
+            if (res.responseContent.errors) {
+                if (
+                    res.responseContent.errors[0].description?.match(/^\{.+\}$/)
+                ) {
+                    console.log("FAUNA DEBUG START")
+                    console.log(
+                        parseJSON(res.responseContent.errors[0].description)
+                    )
+                    console.log("FAUNA DEBUG END")
+                }
+            }
+        },
+    })

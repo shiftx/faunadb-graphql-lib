@@ -6,6 +6,8 @@ import { PostType } from "./types/PostType"
 import { PostIdType } from "./types/PostIdType"
 import { FileType } from "./types/FileType"
 import { NoteType } from "./types/NoteType"
+import { PostPageType } from "./types/PostPageType"
+import { faunaPageArgs } from "../src/utilities/faunaPageArgs"
 
 export const schema = new GraphQLSchema({
     types: [FileType, NoteType],
@@ -29,16 +31,37 @@ export const schema = new GraphQLSchema({
                 args: {
                     id: { type: PostIdType },
                 },
-                resolve: async (_, { id }, context, ast) => {
-                    const query = astToFaunaQuery(ast, q.Get(id))
+                resolve: async (_, { id }, context, info) => {
+                    const query = astToFaunaQuery(info, q.Get(id))
                     const res = await createClient()
                         .query(query)
                         .catch(err => {
                             console.log(err)
                             throw err
                         })
-                    console.log(res)
-                    console.log(res.attachments.items)
+                    return res
+                },
+            },
+            pagePosts: {
+                type: PostPageType,
+                args: faunaPageArgs(),
+                resolve: async (first, { size }, context, info) => {
+                    // console.log("before")
+                    const query = astToFaunaQuery(
+                        info,
+                        q.Map(
+                            q.Paginate(q.Documents(q.Collection("Posts")), {
+                                size,
+                            }),
+                            q.Lambda("ref", q.Get(q.Var("ref")))
+                        )
+                    )
+                    const res = await createClient()
+                        .query(query)
+                        .catch(err => {
+                            console.log(err)
+                            throw err
+                        })
                     return res
                 },
             },

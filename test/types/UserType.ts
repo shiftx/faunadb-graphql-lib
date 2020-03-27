@@ -1,6 +1,6 @@
 import { GraphQLFaunaCollectionType } from "../../src/types/GraphQLFaunaCollectionType"
 import { UserIdType } from "./UserIdType"
-import { GraphQLString } from "graphql"
+import { GraphQLString, GraphQLInt } from "graphql"
 import { PostPageType } from "./PostPageType"
 
 export const UserType = new GraphQLFaunaCollectionType({
@@ -12,14 +12,16 @@ export const UserType = new GraphQLFaunaCollectionType({
         email: { type: GraphQLString },
         posts: {
             type: PostPageType,
-            fql: q =>
-                q.GetAll(
+            args: { size: { type: GraphQLInt } },
+            fqlQuery: (doc, q) =>
+                q.Map(
                     q.Paginate(
                         q.Match(
                             q.Index("Posts_by_authorRef"),
-                            q.SelectRef(q.Var("_item_"))
+                            q.Select(["ref"], doc)
                         )
-                    )
+                    ),
+                    q.Lambda("ref", q.Get(q.Var("ref")))
                 ),
         },
     }),

@@ -1,9 +1,9 @@
-import { GraphQLString, GraphQLInterfaceType } from "graphql"
-import { GraphQLFaunaCollectionType } from "../../src/types/GraphQLFaunaCollectionType"
+import { GraphQLString } from "graphql"
 import { GraphQLFaunaTimestampType } from "../../src/types/GraphQLFaunaTimestampType"
+import { GraphQLFaunaInterfaceType } from "../../src/types/GraphQLFaunaInterfaceType"
 import { AttachmentIdType } from "./AttachmentIdType"
 
-export const AttachmentType = new GraphQLInterfaceType({
+export const AttachmentType = new GraphQLFaunaInterfaceType({
     name: "AttachmentType",
     fields: () => ({
         id: { type: AttachmentIdType },

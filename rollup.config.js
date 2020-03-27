@@ -6,7 +6,7 @@ import pkg from "./package.json"
 export default [
     {
         input: "src/index.ts",
-        external: ["ms"],
+        external: ["ms", "faunadb-fql-lib"],
         plugins: [peerDepsExternal(), typescript()],
         output: [
             { file: pkg.main, format: "cjs" },

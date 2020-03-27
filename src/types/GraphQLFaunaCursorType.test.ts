@@ -1,5 +1,5 @@
-import { GraphQLFaunaCursorType } from "./GraphQLFaunaCursorType"
 import { query as q } from "faunadb"
+import { GraphQLFaunaCursorType } from "./GraphQLFaunaCursorType"
 
 describe("GraphQLFaunaCursorType", () => {
     test("serialize/parse", () => {
