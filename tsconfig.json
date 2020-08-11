@@ -1,7 +1,6 @@
 {
     "compilerOptions": {
         "declaration": true,
-        "declarationDir": "./dist/types",
         "moduleResolution": "node",
         "outDir": "./dist",
         "target": "es2015",
