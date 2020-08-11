@@ -1,7 +1,7 @@
 import { GraphQLSchema, GraphQLObjectType } from "graphql"
 import { query as q } from "faunadb"
 import { createClient } from "./utils"
-import { astToFaunaQuery } from "../src/utilities/astToFaunaQuery"
+import { generateFaunaQuery } from "../src/utilities/generateFaunaQuery"
 import { PostType } from "./types/PostType"
 import { PostIdType } from "./types/PostIdType"
 import { FileType } from "./types/FileType"
@@ -32,7 +32,7 @@ export const schema = new GraphQLSchema({
                     id: { type: PostIdType },
                 },
                 resolve: async (_, { id }, context, info) => {
-                    const query = astToFaunaQuery(info, q.Get(id))
+                    const query = generateFaunaQuery(info, q.Get(id))
                     // const query = q.Get(id)
                     const res = await createClient()
                         .query(query)
@@ -48,7 +48,7 @@ export const schema = new GraphQLSchema({
                 args: faunaPageArgs(),
                 resolve: async (first, { size }, context, info) => {
                     // console.log("before")
-                    const query = astToFaunaQuery(
+                    const query = generateFaunaQuery(
                         info,
                         q.Map(
                             q.Paginate(q.Documents(q.Collection("Posts")), {

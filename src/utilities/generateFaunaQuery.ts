@@ -4,11 +4,11 @@ import {
     visitWithTypeInfo,
     isLeafType,
     GraphQLList,
+    GraphQLResolveInfo,
 } from "graphql"
-
 import { Expr } from "faunadb"
-import { isFaunaObjectType } from "./isFunaObjectType"
 import { query as q } from "faunadb-fql-lib"
+import { isFaunaObjectType } from "./isFunaObjectType"
 
 // For some reason using '_' as var does not play well. Is there some internal Fauna issue with that? Or is it reserved in Lambda as "not in use"?
 const CURRENT_DOC = "__CD__"
@@ -80,8 +80,8 @@ const generateParseFn = (typeInfo, fieldName) => node => {
     }
 }
 
-export const astToFaunaQuery = (ast, query) => {
-    const { operation, schema, fieldName } = ast
+export const generateFaunaQuery = (resolveInfo: GraphQLResolveInfo, query) => {
+    const { operation, schema, fieldName } = resolveInfo
     const typeInfo = new TypeInfo(schema)
 
     const parseFieldNode = generateParseFn(typeInfo, fieldName)

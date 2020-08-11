@@ -1,6 +1,6 @@
 import { parse, graphql } from "graphql"
 import { parseJSON } from "faunadb/src/_json"
-import { astToFaunaQuery } from "../../src/utilities/astToFaunaQuery"
+import { generateFaunaQuery } from "../../src/utilities/generateFaunaQuery"
 import { schema } from "../schema"
 import { query as q } from "faunadb"
 
@@ -8,7 +8,7 @@ const createAstObject = (gqlQuery, fqlQuery = "__testing__") => {
     const document = parse(gqlQuery)
     const data = {}
     document.definitions[0].selectionSet.selections.forEach(field => {
-        data[field.alias?.value || field.name.value] = astToFaunaQuery(
+        data[field.alias?.value || field.name.value] = generateFaunaQuery(
             {
                 schema,
                 operation: document.definitions[0],
