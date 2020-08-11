@@ -10,6 +10,7 @@ import { UserType } from "./UserType"
 import { AttachmentPageType } from "./AttachmentPageType"
 import { faunaPageArgs } from "../../src/utilities/faunaPageArgs"
 import { GraphQLFaunaTimestampType } from "../../src/types/GraphQLFaunaTimestampType"
+import { GraphQLFaunaObjectType } from "../../src/types/GraphQLFaunaObjectType"
 
 const CoordinatesType = new GraphQLObjectType({
     name: "CoordinatesType",
@@ -22,17 +23,9 @@ const CoordinatesType = new GraphQLObjectType({
 export const PostType = new GraphQLFaunaCollectionType({
     name: "Post",
     collectionName: "Posts",
-    fields: () => ({
-        id: { type: PostIdType },
-        ts: { type: GraphQLFaunaTimestampType },
-        title: { type: GraphQLString },
-        author: { type: UserType },
-        tags: { type: new GraphQLList(GraphQLString) },
-        coordinates: { type: CoordinatesType },
-        attachments: {
-            type: AttachmentPageType,
-            args: faunaPageArgs(),
-            fqlQuery: (doc, q) => {
+    fql: {
+        fields: {
+            attachments: (doc, q) => {
                 // console.log("here in att", doc)
                 return q.Map(
                     q.Paginate(
@@ -45,6 +38,18 @@ export const PostType = new GraphQLFaunaCollectionType({
                     q.Lambda("ref", q.Get(q.Var("ref")))
                 )
             },
+        }
+    },
+    fields: () => ({
+        id: { type: PostIdType },
+        ts: { type: GraphQLFaunaTimestampType },
+        title: { type: GraphQLString },
+        author: { type: UserType },
+        tags: { type: new GraphQLList(GraphQLString) },
+        coordinates: { type: CoordinatesType },
+        attachments: {
+            type: AttachmentPageType,
+            args: faunaPageArgs(),
         },
     }),
 })

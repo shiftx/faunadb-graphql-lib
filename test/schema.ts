@@ -1,6 +1,6 @@
 import { GraphQLSchema, GraphQLObjectType } from "graphql"
-import { createClient } from "./utils"
 import { query as q } from "faunadb"
+import { createClient } from "./utils"
 import { astToFaunaQuery } from "../src/utilities/astToFaunaQuery"
 import { PostType } from "./types/PostType"
 import { PostIdType } from "./types/PostIdType"
@@ -33,6 +33,7 @@ export const schema = new GraphQLSchema({
                 },
                 resolve: async (_, { id }, context, info) => {
                     const query = astToFaunaQuery(info, q.Get(id))
+                    // const query = q.Get(id)
                     const res = await createClient()
                         .query(query)
                         .catch(err => {

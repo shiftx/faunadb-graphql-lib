@@ -7,6 +7,7 @@ import { GraphQLFaunaObjectType } from "./GraphQLFaunaObjectType"
 export class GraphQLFaunaCollectionType extends GraphQLFaunaObjectType {
     collectionName: string
     fqlTypeCheck: () => void
+    fql: object
     constructor({
         name,
         fields,
@@ -14,11 +15,13 @@ export class GraphQLFaunaCollectionType extends GraphQLFaunaObjectType {
         interfaces = undefined,
         isTypeOf = undefined,
         fqlTypeCheck = undefined,
+        fql = {},
     }) {
         // if (interfaces?.length) validateInterfaces(interfaces)
         super({ name, fields, interfaces, isTypeOf })
         this.collectionName = collectionName
         this.fqlTypeCheck = fqlTypeCheck
+        this.fql = fql
     }
     static isFaunaGraphQLType: true
 }

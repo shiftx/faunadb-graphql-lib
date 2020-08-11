@@ -6,11 +6,14 @@ const opts =
         ? {
               secret: process.env.FAUNA_DB_SECRET,
           }
-        : {
-              secret: "secret",
-              scheme: "http",
-              port: 8443,
-              domain: "localhost",
+        // : {
+        //       secret: "secret",
+        //       scheme: "http",
+        //       port: 8443,
+        //       domain: "localhost",
+        //   }
+          :{
+              secret: "fnADy3z-eMACBYYkkL8c11fu_UugKnqinbluMRCa"
           }
 // @ts-ignore
 export const createClient = () =>

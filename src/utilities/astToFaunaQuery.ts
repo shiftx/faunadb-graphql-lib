@@ -33,8 +33,8 @@ const defaultEmbedQuery = (fieldName, isList) => {
     )
 }
 
-const generateSelector = (name, field, leaf = true) => {
-    if (field.fqlQuery) return [name, field.fqlQuery(CURRENT_DOC_VAR, q)]
+const generateSelector = (name, parentType, leaf = true) => {
+    if (parentType.fql?.fields?.[name]) return [name, parentType.fql?.fields?.[name](CURRENT_DOC_VAR, q)]
     if (leaf) {
         if (name === "id" || name === "ref")
             return [name, q.Select(["ref"], CURRENT_DOC_VAR, null)]
@@ -47,9 +47,15 @@ const generateSelector = (name, field, leaf = true) => {
 const generateParseFn = (typeInfo, fieldName) => node => {
     const name = node.name.value
     const type = typeInfo.getType()
+    const parentType = typeInfo.getParentType()
     const field = typeInfo.getFieldDef()
+    // if (field.name === 'posts') {
+    //     console.log(field)
+    //     console.log(type)
+    //     console.log(parentType.fql)
+    //     // console.log
+    // }
     if (!type && !field) {
-        console.log(node)
         throw new Error(`No field ${name}`)
     }
     const isList = type instanceof GraphQLList
@@ -62,6 +68,7 @@ const generateParseFn = (typeInfo, fieldName) => node => {
     return {
         name,
         type,
+        parentType,
         field,
         isList,
         typeInList,
@@ -113,8 +120,6 @@ export const astToFaunaQuery = (ast, query) => {
             },
             InlineFragment: node => {
                 const type = typeInfo.getType()
-                // console.log(node)
-                // console.log(node.selectionSet)
                 return q.If(
                     // @ts-ignore
                     type.fqlTypeCheck(CURRENT_DOC_VAR, q),
@@ -122,11 +127,12 @@ export const astToFaunaQuery = (ast, query) => {
                     {}
                 )
             },
-            Field: node => {
+            Field: (node, ...rest) => {
                 const {
                     name,
                     field,
                     type,
+                    parentType,
                     isList,
                     isLeaf,
                     isRoot,
@@ -134,15 +140,30 @@ export const astToFaunaQuery = (ast, query) => {
                     returnName,
                     selectionSet,
                 } = parseFieldNode(node)
-
-                if (isLeaf) return generateSelector(returnName, field)
-                if (!isFaunaObjectType)
-                    return generateSelector(returnName, field, false)
+                if (isRoot && !isFaunaObjectType)
+                    throw new Error("Invalid root type. Must be a FaunaGraphQL type")
+                if (isLeaf)
+                    return generateSelector(returnName, parentType)
+                if (!isFaunaObjectType) {
+                    if (selectionSet) {
+                        return generateSelector(returnName, parentType)
+                    } else {
+                        throw new Error("How is it possibele to get here?");
+                    }
+                    // return generateSelector(returnName, parentType, false)
+                }
 
                 let nextQuery
                 if (isRoot) nextQuery = query
-                if (field.fqlQuery)
-                    nextQuery = field.fqlQuery(CURRENT_DOC_VAR, q)
+                // console.log('field', name)
+                // console.log('type', type)
+                // console.log('rest', rest)
+                // console.log('field', field, type?.fql?.fields?.[name])
+                // if (field.fqlQuery)
+                //     nextQuery = field.fqlQuery(CURRENT_DOC_VAR, q)
+                if (parentType.fql?.fields?.[name]) {
+                    nextQuery = parentType.fql?.fields?.[name](CURRENT_DOC_VAR, q)
+                }
                 if (!nextQuery) nextQuery = defaultEmbedQuery(name, isList)
                 return [
                     returnName,
